@@ -1,0 +1,10 @@
+-------------------------------------------------------------------------------
+Test set: com.security.jwt.JwtApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.472 s <<< FAILURE! - in com.security.jwt.JwtApplicationTests
+contextLoads  Time elapsed: 0 s  <<< ERROR!
+java.lang.IllegalStateException: Failed to load ApplicationContext
+Caused by: org.springframework.beans.factory.BeanDefinitionStoreException: Failed to process import candidates for configuration class [org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration]; nested exception is java.lang.NoClassDefFoundError: org/springframework/data/repository/config/RepositoryConfigurationSource
+Caused by: java.lang.NoClassDefFoundError: org/springframework/data/repository/config/RepositoryConfigurationSource
+Caused by: java.lang.ClassNotFoundException: org.springframework.data.repository.config.RepositoryConfigurationSource
+

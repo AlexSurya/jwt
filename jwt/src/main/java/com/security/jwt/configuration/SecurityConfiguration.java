@@ -3,14 +3,21 @@
  */
 package com.security.jwt.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+
+import com.security.jwt.repository.UserRepository;
 
 /**
  * @author alexsurya
@@ -20,28 +27,59 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+	@Autowired
+	UserPrincipalDetailsService userPrincipalDetailsService;
+	
+	@Autowired
+	UserRepository userRepository;
+	
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		
-		auth
-			.inMemoryAuthentication()
-			.withUser("alex").password(passwordEncoder().encode("alex")).roles("ADMIN").authorities("API_1")
-			.and()
-			.withUser("surya").password(passwordEncoder().encode("surya")).roles("USER").authorities("API_2");
+		/*
+		 * auth .inMemoryAuthentication()
+		 * .withUser("alex").password(passwordEncoder().encode("alex")).authorities(
+		 * "API_1", "ROLE_ADMIN") .and()
+		 * .withUser("surya").password(passwordEncoder().encode("surya")).authorities(
+		 * "API_2","ROLE_USER");
+		 */
+		auth	
+			.authenticationProvider(authenticationProvider());
 	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http
+		/*
+		 * http .authorizeRequests() .antMatchers("/jwt/hello").permitAll()
+		 * .antMatchers("/jwt/index").hasRole("USER")
+		 * .antMatchers("/jwt/admin").hasRole("ADMIN")
+		 * .antMatchers("/jwt/api/test1").hasAuthority("API_1")
+		 * .antMatchers("/jwt/api/user/list").hasRole("ADMIN") .and() .httpBasic();
+		 */
+		http	
+			.csrf().disable()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.addFilter( new JwtAuthenticatinFilter(authenticationManager()))
+			.addFilter(new JwtAuthorizationFilter(authenticationManager() , userRepository))
 			.authorizeRequests()
 			.antMatchers("/jwt/hello").permitAll()
-			.antMatchers("/jwt/index").hasRole("USER")
-			.antMatchers("/jwt/admin").hasRole("ADMIN")
-			.antMatchers("/jwt/api/test1").hasAuthority("API_1")
-			.and()
-			.httpBasic();
+			.antMatchers("/jwt/admin/**").hasRole("ADMIN")
+			.antMatchers("/jwt/api/**").hasRole("USER");
 	}
+	
+	
+	@Bean
+	DaoAuthenticationProvider authenticationProvider() {
+		
+		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+		daoAuthenticationProvider.setUserDetailsService(userPrincipalDetailsService);
+		return daoAuthenticationProvider;
+	}
+	
 	
 	@Bean
 	PasswordEncoder passwordEncoder() {

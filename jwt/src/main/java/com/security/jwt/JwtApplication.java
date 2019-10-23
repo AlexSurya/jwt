@@ -17,26 +17,23 @@ public class JwtApplication {
 		SpringApplication.run(JwtApplication.class, args);
 	}
 
-	@Bean
-	public ServletWebServerFactory servletContainer() {
-		// enable SSL trafic
-		TomcatServletWebServerFactory servletWebServerFactory = new TomcatServletWebServerFactory() {
-			@Override
-			protected void postProcessContext(Context context) {
-				SecurityConstraint securityConstraint = new SecurityConstraint();
-				securityConstraint.setUserConstraint("CONFIDENTINAL");
-				SecurityCollection collection = new SecurityCollection();
-				collection.addPattern("/*");
-				securityConstraint.addCollection(collection);
-				context.addConstraint(securityConstraint);
-
-			}
-		};
-
-		servletWebServerFactory.addAdditionalTomcatConnectors(httpRedirect());
-		return servletWebServerFactory;
-	}
-
+	/*
+	 * @Bean public ServletWebServerFactory servletContainer() { // enable SSL
+	 * trafic TomcatServletWebServerFactory servletWebServerFactory = new
+	 * TomcatServletWebServerFactory() {
+	 * 
+	 * @Override protected void postProcessContext(Context context) {
+	 * SecurityConstraint securityConstraint = new SecurityConstraint();
+	 * securityConstraint.setUserConstraint("CONFIDENTINAL"); SecurityCollection
+	 * collection = new SecurityCollection(); collection.addPattern("/*");
+	 * securityConstraint.addCollection(collection);
+	 * context.addConstraint(securityConstraint);
+	 * 
+	 * } };
+	 * 
+	 * servletWebServerFactory.addAdditionalTomcatConnectors(httpRedirect()); return
+	 * servletWebServerFactory; }
+	 */
 	private Connector httpRedirect() {
 		Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
 		connector.setScheme("http");
