@@ -5,7 +5,7 @@ package com.security.jwt.model;
 
 /**
  * @author alexsurya
- *
+ * used for login only
  */
 public class LoginViewModel {
 
