@@ -4,6 +4,7 @@
 package com.security.jwt.configuration;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Optional;
 
 import javax.servlet.FilterChain;
@@ -44,6 +45,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
 		String header = request.getHeader(JwtProperties.HEADER_STRING);
 		
+		Enumeration<String> test = request.getHeaderNames();
 		if (header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
 			chain.doFilter(request, response);
 			return;

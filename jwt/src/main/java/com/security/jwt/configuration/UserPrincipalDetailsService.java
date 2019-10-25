@@ -28,8 +28,12 @@ public class UserPrincipalDetailsService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		Optional<User> user = userService.getByUserName(username);
-		UserPrincipal userPrincipal = new UserPrincipal(user.get());
-		return userPrincipal;
+		if (user.isPresent()) {
+			UserPrincipal userPrincipal = new UserPrincipal(user.get());
+			return userPrincipal;
+		} 
+		return new UserPrincipal(new User());
+		
 	}
 
 }

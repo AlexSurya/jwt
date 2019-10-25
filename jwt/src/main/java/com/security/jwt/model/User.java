@@ -6,23 +6,32 @@ package com.security.jwt.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonView;
+
 /**
  * @author alexsurya
  *
  */
 
 @Document(collection = "tbl_users")
+//@JsonFilter(value = "userFilter")
 public class User {
 
 	@Id
+	@JsonView(JsonViews.Internal.class)
 	private String id;
 
+	@JsonView(JsonViews.External.class)
 	private String username;
 
+	@JsonView(JsonViews.Internal.class)
 	private String password;
 
+	@JsonView(JsonViews.Internal.class)
 	private String permissions;
 
+	@JsonView(JsonViews.External.class)
 	private String role;
 
 	public User() {

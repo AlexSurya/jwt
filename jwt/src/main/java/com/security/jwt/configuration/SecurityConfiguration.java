@@ -58,16 +58,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		 * .antMatchers("/jwt/api/test1").hasAuthority("API_1")
 		 * .antMatchers("/jwt/api/user/list").hasRole("ADMIN") .and() .httpBasic();
 		 */
+		JwtAuthenticatinFilter filter = new JwtAuthenticatinFilter(authenticationManager());
+		filter.setFilterProcessesUrl("/jwt/login");
 		http	
 			.csrf().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-			.addFilter( new JwtAuthenticatinFilter(authenticationManager()))
+			.addFilter(filter)
+			.addFilter(new JwtAuthenticatinFilter(authenticationManager()))
 			.addFilter(new JwtAuthorizationFilter(authenticationManager() , userRepository))
 			.authorizeRequests()
 			.antMatchers("/jwt/hello").permitAll()
 			.antMatchers("/jwt/admin/**").hasRole("ADMIN")
-			.antMatchers("/jwt/api/**").hasRole("USER");
+			.antMatchers("/jwt/api/**").hasRole("USER")
+			.antMatchers("/view/**").hasRole("USER");
 	}
 	
 	
